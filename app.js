@@ -10,7 +10,7 @@ const port = 3000;
 // EJS
 app.set("view engine", "ejs");
 
-// rooute
+// route
 app.get("/", (req, res) => {
   res.render("index", {
     // send variable name to HTML
