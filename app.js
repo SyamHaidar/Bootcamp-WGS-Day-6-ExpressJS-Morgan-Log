@@ -1,6 +1,5 @@
 const express = require("express");
-const path = require("path");
-const router = express.Router();
+const expressLayouts = require('express-ejs-layouts');
 
 // ---------------------------------------------------------------------------
 
@@ -9,12 +8,14 @@ const port = 3000;
 
 // EJS
 app.set("view engine", "ejs");
+app.use(expressLayouts);
 
 // route
 app.get("/", (req, res) => {
   res.render("index", {
     // send variable title and name to HTML
     title: "ExpressJS web server",
+    page: "home",
     name: "Syam",
   });
 });
@@ -36,12 +37,16 @@ app.get("/contact", (req, res) => {
   ];
   res.render("contact", {
     title: "Contact - ExpressJS web server",
+    page: "contact",
     cont,
   });
 });
 
 app.get("/about", (req, res) => {
-  res.render("about");
+  res.render("about", {
+    title: "About - ExpressJS web server",
+    page: "about",
+  });
 });
 
 // route with parameter
