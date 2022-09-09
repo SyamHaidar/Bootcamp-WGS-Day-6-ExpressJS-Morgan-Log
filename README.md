@@ -2,4 +2,5 @@
 
 ### Lesson
 
-1. Create ExpressJS web server with EJS view
+1. Create ExpressJS web server
+2. EJS view
