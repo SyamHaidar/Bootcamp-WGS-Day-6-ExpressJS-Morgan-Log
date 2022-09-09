@@ -13,13 +13,31 @@ app.set("view engine", "ejs");
 // route
 app.get("/", (req, res) => {
   res.render("index", {
-    // send variable name to HTML
+    // send variable title and name to HTML
+    title: "ExpressJS web server",
     name: "Syam",
   });
 });
 
 app.get("/contact", (req, res) => {
-  res.render("contact");
+  cont = [
+    {
+      name: "Syam",
+      email: "syam@email.com",
+    },
+    {
+      name: "Adit",
+      email: "adit@email.com",
+    },
+    {
+      name: "Gilby",
+      email: "gilby@email.com",
+    },
+  ];
+  res.render("contact", {
+    title: "Contact - ExpressJS web server",
+    cont,
+  });
 });
 
 app.get("/about", (req, res) => {

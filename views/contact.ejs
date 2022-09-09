@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Contact - ExpressJS web server</title>
+    <title><%= title %></title>
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css"
       rel="stylesheet"
@@ -32,8 +32,21 @@
     </nav>
     <div class="container mt-4">
       <div class="bg-light p-5 rounded">
-        <div class="col-sm-8 mx-auto">
+        <div class="jumbotron">
           <h1>Contact</h1>
+          <ol>
+            <% if(!cont.length) { %>
+              <p>Contact is empty</p>
+            <% } else { %> 
+              <% cont.map((item)=>{ %>
+                <li>
+                  Name: <%= item.name %> <br />
+                  Email: <%= item.email %>
+                </li>
+                <br />
+              <% }) %> 
+            <% } %>
+          </ol>
         </div>
       </div>
     </div>
