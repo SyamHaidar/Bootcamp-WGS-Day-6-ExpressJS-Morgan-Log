@@ -1,6 +1,7 @@
 const express = require('express')
 const expressLayouts = require('express-ejs-layouts')
 const fs = require('fs')
+const validator = require('validator')
 
 // ---------------------------------------------------------------------------
 
@@ -12,6 +13,14 @@ app.use(express.urlencoded({ extended: true }))
 
 // contact data JSON
 const dataPath = './data/contacts.json'
+
+// Error message if valdator not valid
+let errorName = ''
+let errorEmail = ''
+let errorPhone = ''
+let deleteMessage = ''
+let saveMessage = ''
+let updateMessage = ''
 
 // get data
 const getData = () => {
@@ -73,13 +82,53 @@ app.get('/contact', (req, res) => {
   res.render('contact', {
     title: 'Contact - ExpressJS web server',
     page: 'contact',
+    message: {
+      errorName: errorName,
+      errorEmail: errorEmail,
+      errorPhone: errorPhone,
+      saveMessage: saveMessage,
+      updateMessage: updateMessage,
+      deleteMessage: deleteMessage,
+    },
     data: contacts,
   })
+
+  errorName = ''
+  errorEmail = ''
+  errorPhone = ''
+  saveMessage = ''
+  updateMessage = ''
+  deleteMessage = ''
 })
 
 // add new contact
-app.post('/contact/save', (req, res) => {
-  saveData(req.body.name, req.body.email, req.body.phone)
+app.post('/contact', (req, res) => {
+  const contacts = getData()
+  const duplicate = contacts.find(
+    (contact) => contact.name.toLowerCase() === req.body.name.toLowerCase()
+  )
+
+  // Check duplicate name and validator for email and phone
+  if (duplicate) {
+    errorName = 'Contact Name already recorded. Please use another name'
+  } else {
+    if (req.body.email) {
+      if (!validator.isEmail(req.body.email)) {
+        errorEmail = 'Please input correct email'
+        return res.redirect('/contact')
+      }
+    }
+
+    if (!validator.isMobilePhone(req.body.phone)) {
+      errorPhone = 'Please input correct phone number'
+      return res.redirect('/contact')
+    }
+
+    // if name not exist and data valid then save data
+    saveMessage = 'Data saved!'
+    saveData(req.body.name, req.body.email, req.body.phone)
+  }
+
   res.redirect('/contact')
 })
 
@@ -94,19 +143,51 @@ app.get('/contact/:name/edit', (req, res) => {
   res.render('contactEdit', {
     title: 'Contact - ExpressJS web server',
     page: 'contact',
+    message: { errorName: errorName, errorEmail: errorEmail, errorPhone: errorPhone },
     data: data,
   })
+
+  errorName = ''
+  errorEmail = ''
+  errorPhone = ''
 })
 
 // update contact
 app.post('/contact/update', (req, res) => {
-  updateData(req.body.oldName, req.body.name, req.body.email, req.body.phone)
+  const contacts = getData()
+  const duplicate = contacts.find(
+    (contact) => contact.name.toLowerCase() === req.body.name.toLowerCase()
+  )
+
+  // Check duplicate name and validator for email and phone
+  if (duplicate) {
+    errorName = 'Contact Name already recorded. Please use another name'
+    return res.redirect(`/contact/${req.body.oldName}/edit`)
+  } else {
+    if (req.body.email) {
+      if (!validator.isEmail(req.body.email)) {
+        errorEmail = 'Please input correct email'
+        return res.redirect(`/contact/${req.body.oldName}/edit`)
+      }
+    }
+
+    if (!validator.isMobilePhone(req.body.phone)) {
+      errorPhone = 'Please input correct phone number'
+      return res.redirect(`/contact/${req.body.oldName}/edit`)
+    }
+
+    // if name not exist and data valid then update data
+    updateMessage = 'Data updated!'
+    updateData(req.body.oldName, req.body.name, req.body.email, req.body.phone)
+  }
+
   res.redirect('/contact')
 })
 
 // delete contact
 app.post('/contact/:name/delete', (req, res) => {
   deleteData(req.params.name)
+  deleteMessage = 'Data deleted!'
   res.redirect('/contact')
 })
 
