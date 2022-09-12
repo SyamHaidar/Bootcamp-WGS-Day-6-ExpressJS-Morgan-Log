@@ -1,6 +1,5 @@
-# Bootcamp WGS - Day 4
+# Bootcamp WGS - Day 5
 
 ### Lesson
 
-1. Create ExpressJS web server
-2. EJS view
+1. ExpressJS CRUD
