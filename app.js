@@ -41,7 +41,7 @@ const saveData = (name, email, phone) => {
 const updateData = (oldName, name, email, phone) => {
   const contact = { name, email, phone }
 
-  deleteData(oldName)
+  // deleteData(oldName)
 
   const newContact = getData()
 
@@ -104,27 +104,34 @@ app.get('/contact', (req, res) => {
 // add new contact
 app.post('/contact', (req, res) => {
   const contacts = getData()
-  const duplicate = contacts.find(
+  const currentData = contacts.find(
     (contact) => contact.name.toLowerCase() === req.body.name.toLowerCase()
   )
 
-  // Check duplicate name and validator for email and phone
-  if (duplicate) {
+  // check if new data not exist
+  if (currentData) {
     errorName = 'Contact Name already recorded. Please use another name'
-  } else {
-    if (req.body.email) {
-      if (!validator.isEmail(req.body.email)) {
-        errorEmail = 'Please input correct email'
-        return res.redirect('/contact')
-      }
-    }
+  }
 
-    if (!validator.isMobilePhone(req.body.phone)) {
-      errorPhone = 'Please input correct phone number'
-      return res.redirect('/contact')
+  // check if email valid
+  if (req.body.email) {
+    if (!validator.isEmail(req.body.email)) {
+      errorEmail = 'Please input correct email'
     }
+  }
 
-    // if name not exist and data valid then save data
+  // check if phone number valid
+  if (!validator.isMobilePhone(req.body.phone, ['id-ID'])) {
+    errorPhone = 'Please input correct phone number'
+  }
+
+  // check if all input data corect and valid
+  if (
+    !currentData &&
+    validator.isEmail(req.body.email) &&
+    validator.isMobilePhone(req.body.phone, ['id-ID'])
+  ) {
+    // if success send message and save data
     saveData(req.body.name, req.body.email, req.body.phone)
     saveMessage = 'Data saved!'
   }
@@ -155,33 +162,50 @@ app.get('/contact/:name/edit', (req, res) => {
 // update contact
 app.post('/contact/update', (req, res) => {
   const contacts = getData()
-  const duplicate = contacts.find(
+  const currentData = contacts.find(
     (contact) => contact.name.toLowerCase() === req.body.name.toLowerCase()
   )
 
-  // Check duplicate name and validator for email and phone
-  if (duplicate) {
-    errorName = 'Contact Name already recorded. Please use another name'
-    return res.redirect(`/contact/${req.body.oldName}/edit`)
-  } else {
-    if (req.body.email) {
-      if (!validator.isEmail(req.body.email)) {
-        errorEmail = 'Please input correct email'
-        return res.redirect(`/contact/${req.body.oldName}/edit`)
-      }
-    }
+  deleteData(req.body.oldName)
 
-    if (!validator.isMobilePhone(req.body.phone)) {
-      errorPhone = 'Please input correct phone number'
-      return res.redirect(`/contact/${req.body.oldName}/edit`)
+  // check if new name not exist
+  if (req.body.oldName !== req.body.name) {
+    if (currentData) {
+      errorName = 'Contact Name already recorded. Please use another name'
+      req.body.name = req.body.oldName
     }
-
-    // if name not exist and data valid then update data
-    updateData(req.body.oldName, req.body.name, req.body.email, req.body.phone)
-    updateMessage = 'Data updated!'
   }
 
-  res.redirect('/contact')
+  // check if email valid
+  if (req.body.email) {
+    if (!validator.isEmail(req.body.email)) {
+      errorEmail = 'Please input correct email'
+      req.body.email = currentData.email
+    }
+  }
+
+  // check if phone number valid
+  if (!validator.isMobilePhone(req.body.phone, ['id-ID'])) {
+    errorPhone = 'Please input correct phone number'
+    req.body.phone = currentData.phone
+  }
+
+  // if currentData not exist and data valid then update with new data
+  updateData(req.body.oldName, req.body.name, req.body.email, req.body.phone)
+
+  // check if all input data corect and valid
+  if (
+    !currentData &&
+    validator.isEmail(req.body.email) &&
+    validator.isMobilePhone(req.body.phone, ['id-ID'])
+  ) {
+    // if success send message and redirect to contact
+    updateMessage = 'Data updated!'
+    res.redirect('/contact')
+  } else {
+    // if failed redirect to edit
+    res.redirect(`/contact/${req.body.oldName}/edit`)
+  }
 })
 
 // delete contact
