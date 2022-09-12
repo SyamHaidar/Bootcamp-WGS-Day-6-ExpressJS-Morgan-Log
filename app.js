@@ -125,8 +125,8 @@ app.post('/contact', (req, res) => {
     }
 
     // if name not exist and data valid then save data
-    saveMessage = 'Data saved!'
     saveData(req.body.name, req.body.email, req.body.phone)
+    saveMessage = 'Data saved!'
   }
 
   res.redirect('/contact')
@@ -177,8 +177,8 @@ app.post('/contact/update', (req, res) => {
     }
 
     // if name not exist and data valid then update data
-    updateMessage = 'Data updated!'
     updateData(req.body.oldName, req.body.name, req.body.email, req.body.phone)
+    updateMessage = 'Data updated!'
   }
 
   res.redirect('/contact')
