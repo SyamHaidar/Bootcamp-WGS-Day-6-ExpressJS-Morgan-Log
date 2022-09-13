@@ -10,6 +10,7 @@ const port = 3000
 
 // middleware
 app.use(express.urlencoded({ extended: true }))
+app.use('/public', express.static('public'))
 
 // contact data JSON
 const dataPath = './data/contacts.json'
