@@ -20,15 +20,15 @@
       <input type="hidden" name="oldName" value="<%= data.name %>" />
       <div class="mb-3">
         <label class="form-label">Name</label>
-        <input type="text" name="name" class="form-control" value="<%= data.name %>" required />
+        <input type="text" name="name" class="form-control" value="<%= (editData.name) ? editData.name : data.name %>" required />
       </div>
       <div class="mb-3">
         <label class="form-label">Email</label>
-        <input type="email" name="email" class="form-control" value="<%= data.email %>" />
+        <input type="email" name="email" class="form-control" value="<%= (editData.email) ? editData.email : data.email %>" />
       </div>
       <div class="mb-3">
         <label class="form-label">Phone</label>
-        <input type="number" name="phone" class="form-control" value="<%= data.phone %>" required />
+        <input type="number" name="phone" class="form-control" value="<%= (editData.phone) ? editData.phone : data.phone %>" required />
       </div>
     </div>
     <div class="modal-footer">

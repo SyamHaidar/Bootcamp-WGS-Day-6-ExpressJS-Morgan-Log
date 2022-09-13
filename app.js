@@ -21,6 +21,7 @@ let errorPhone = ''
 let deleteMessage = ''
 let saveMessage = ''
 let updateMessage = ''
+let editData = { oldName: '', name: '', email: '', phone: '' }
 
 // get data
 const getData = () => {
@@ -38,8 +39,10 @@ const saveData = (name, email, phone) => {
 }
 
 // update data
-const updateData = (name, email, phone) => {
+const updateData = (oldName, name, email, phone) => {
   const contact = { name, email, phone }
+
+  deleteData(oldName)
 
   const newContact = getData()
 
@@ -150,11 +153,13 @@ app.get('/contact/:name/edit', (req, res) => {
     page: 'contact',
     message: { errorName: errorName, errorEmail: errorEmail, errorPhone: errorPhone },
     data: data,
+    editData: editData,
   })
 
   errorName = ''
   errorEmail = ''
   errorPhone = ''
+  editData = { oldName: '', name: '', email: '', phone: '' }
 })
 
 // update contact
@@ -164,32 +169,26 @@ app.post('/contact/update', (req, res) => {
     (contact) => contact.name.toLowerCase() === req.body.name.toLowerCase()
   )
 
-  deleteData(req.body.oldName)
-
   // check if new name not exist
-  if (req.body.oldName !== req.body.name) {
-    if (currentData) {
-      errorName = 'Contact Name already recorded. Please use another name'
-      req.body.name = req.body.oldName
-    }
+  if (currentData) {
+    errorName = 'Contact Name already recorded. Please use another name'
+    editData.oldName = req.body.oldName
+    editData.name = req.body.name
   }
 
   // check if email valid
   if (req.body.email) {
     if (!validator.isEmail(req.body.email)) {
       errorEmail = 'Please input correct email'
-      req.body.email = currentData.email
+      editData.email = req.body.email
     }
   }
 
   // check if phone number valid
   if (!validator.isMobilePhone(req.body.phone, ['id-ID'])) {
     errorPhone = 'Please input correct phone number'
-    req.body.phone = currentData.phone
+    editData.phone = req.body.phone
   }
-
-  // if currentData not exist and data valid then update with new data
-  updateData(req.body.oldName, req.body.name, req.body.email, req.body.phone)
 
   // check if all input data corect and valid
   if (
@@ -198,6 +197,7 @@ app.post('/contact/update', (req, res) => {
     validator.isMobilePhone(req.body.phone, ['id-ID'])
   ) {
     // if success send message and redirect to contact
+    updateData(req.body.oldName, req.body.name, req.body.email, req.body.phone)
     updateMessage = 'Data updated!'
     res.redirect('/contact')
   } else {
