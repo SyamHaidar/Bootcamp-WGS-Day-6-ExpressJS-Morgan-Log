@@ -1,5 +1,5 @@
-# Bootcamp WGS - Day 5
+# Bootcamp WGS - Day 6
 
 ### Lesson
 
-1. ExpressJS CRUD
+1. ExpressJS Static
