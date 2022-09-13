@@ -2,6 +2,7 @@ const express = require('express')
 const expressLayouts = require('express-ejs-layouts')
 const fs = require('fs')
 const validator = require('validator')
+const morgan = require('morgan')
 
 // ---------------------------------------------------------------------------
 
@@ -11,6 +12,12 @@ const port = 3000
 // middleware
 app.use(express.urlencoded({ extended: true }))
 app.use('/public', express.static('public'))
+app.use(morgan('dev'))
+
+app.use((req, res, next) => {
+  console.log('Time:', Date.now())
+  next()
+})
 
 // contact data JSON
 const dataPath = './data/contacts.json'
