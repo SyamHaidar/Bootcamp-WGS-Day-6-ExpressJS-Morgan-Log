@@ -38,10 +38,8 @@ const saveData = (name, email, phone) => {
 }
 
 // update data
-const updateData = (oldName, name, email, phone) => {
+const updateData = (name, email, phone) => {
   const contact = { name, email, phone }
-
-  // deleteData(oldName)
 
   const newContact = getData()
 
